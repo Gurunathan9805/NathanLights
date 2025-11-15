@@ -1,11 +1,35 @@
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
+import {
+  useAppSelector,
+  useAppDispatch,
+  type RootState,
+} from "../../../store/store";
 import { Heart } from "lucide-react";
+import { toggleWishlist } from "../../../store/slices/wishlistSlice";
+import { addToCart } from "../../../store/slices/cartSlice";
 const WishlistPage = () => {
-    const navigate = useNavigate();
-    const wishlist = useSelector((state: any) => state.wishlist);
-    const addToCart = useSelector((state: any) => state.cart);
-    const toggleWishlist = useSelector((state: any) => state.wishlist);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { items: wishlist } = useAppSelector(
+    (state: RootState) => state.wishlist
+  );
+
+  const handleToggleWishlist = (product: any) => {
+    dispatch(toggleWishlist(product));
+  };
+  const handleAddToCart = (product: any) => {
+    dispatch(
+      addToCart({
+        ...product,
+        quantity: 1,
+        id: product.id.toString(), // Ensure ID is a string if needed
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        stock: product.inStock ? 10 : 0,
+      })
+    );
+  };
   return (
     <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
       <div className="max-w-7xl mx-auto px-4">
@@ -37,7 +61,7 @@ const WishlistPage = () => {
                     className="w-full h-64 object-cover"
                   />
                   <button
-                    onClick={() => toggleWishlist(product)}
+                    onClick={() => handleToggleWishlist(product)}
                     className="absolute top-4 right-4 bg-white rounded-full p-2"
                   >
                     <Heart size={20} className="text-red-500 fill-red-500" />
@@ -59,7 +83,7 @@ const WishlistPage = () => {
                     </button>
                     {product.inStock && (
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={() => handleAddToCart(product)}
                         className="flex-1 bg-amber-500 text-white py-2 rounded hover:bg-amber-600"
                       >
                         Add to Cart

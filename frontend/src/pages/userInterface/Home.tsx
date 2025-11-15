@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router";
-import Header from "../components/Header";
-import { ProductCard } from "../components/ProductCard";
-import productsData from "../data/products";
-import type { Product } from "../types";
-import Footer from "../components/footer";
+import { ProductCard } from "../../components/userInterface/ProductCard";
+import productsData from "../../data/products";
+import type { Product } from "../../types";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -16,8 +14,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <Header />
-
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <section className="mb-16">
@@ -118,8 +114,6 @@ const Home = () => {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 };

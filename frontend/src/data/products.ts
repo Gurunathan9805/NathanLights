@@ -1,5 +1,5 @@
 interface Product {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: number;
@@ -12,7 +12,7 @@ interface Product {
 
 const productsData: Product[] = [
   {
-    id: 1,
+    id: "1",
     name: "Aurora Table Lamp",
     category: "table",
     price: 4999,
@@ -23,7 +23,7 @@ const productsData: Product[] = [
     inStock: true,
   },
   {
-    id: 2,
+    id: "2",
     name: "Nordic Pendant Light",
     category: "pendant",
     price: 7999,
@@ -34,7 +34,7 @@ const productsData: Product[] = [
     inStock: true,
   },
   {
-    id: 3,
+    id: "3",
     name: "Minimalist Wall Sconce",
     category: "wall",
     price: 3499,
@@ -45,7 +45,7 @@ const productsData: Product[] = [
     inStock: true,
   },
   {
-    id: 4,
+    id: "4",
     name: "LED Strip Kit",
     category: "led",
     price: 2999,
@@ -56,7 +56,7 @@ const productsData: Product[] = [
     inStock: true,
   },
   {
-    id: 5,
+    id: "5",
     name: "Garden Path Light",
     category: "outdoor",
     price: 5499,
@@ -67,7 +67,7 @@ const productsData: Product[] = [
     inStock: true,
   },
   {
-    id: 6,
+    id: "6",
     name: "Crystal Chandelier",
     category: "pendant",
     price: 12999,
@@ -78,7 +78,7 @@ const productsData: Product[] = [
     inStock: true,
   },
   {
-    id: 7,
+    id: "7",
     name: "Desk Reading Lamp",
     category: "table",
     price: 3999,
@@ -89,7 +89,7 @@ const productsData: Product[] = [
     inStock: false,
   },
   {
-    id: 8,
+    id: "8",
     name: "Smart LED Bulb",
     category: "led",
     price: 1499,

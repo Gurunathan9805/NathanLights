@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { clearCart } from "../../store/slices/cartSlice";
-import { createOrder, resetOrderStatus } from "../../store/slices/orderSlice";
-import type { CheckoutData, CardDetails } from "../../types/checkout";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { clearCart } from "../../../store/slices/cartSlice";
+import { createOrder, resetOrderStatus } from "../../../store/slices/orderSlice";
+import type { CheckoutData, CardDetails } from "../../../types/checkout";
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();

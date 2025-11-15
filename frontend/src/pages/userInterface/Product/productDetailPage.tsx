@@ -1,6 +1,6 @@
 import { Heart, Star } from "lucide-react";
 
-import productsData from "../../data/products";
+import productsData from "../../../data/products";
 import { useNavigate } from "react-router";
 // This is the data structure your component expects for `selectedProduct`
 const selectedProduct = {

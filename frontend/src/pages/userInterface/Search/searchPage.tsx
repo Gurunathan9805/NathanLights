@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import productsData from "../../data/products";
+import productsData from "../../../data/products";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 

@@ -1,14 +1,16 @@
 import { Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useUser } from "../context/UserContext";
-import { useAppSelector } from "../store/store";
-import type { RootState } from "../store/store";
+import { useUser } from "../../context/UserContext";
+import {
+  useAppSelector,
+  type RootState,
+  useAppDispatch,
+} from "../../store/store";
 import { useState } from "react";
-import { useAppDispatch } from "../store/store";
 import {
   updateCartItemThunk,
   removeFromCartThunk,
-} from "../store/slices/cartSlice";
+} from "../../store/slices/cartSlice";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const Header = () => {
     dispatch(removeFromCartThunk(productId));
   };
   return (
-    <header className="sticky top-0 z-50 bg-linear-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
+    <header className="top-0 z-50 bg-linear-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}

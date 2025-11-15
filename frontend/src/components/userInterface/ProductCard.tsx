@@ -1,16 +1,5 @@
 import { Star } from "lucide-react";
-
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  description: string;
-  inStock: boolean;
-}
+import type { Product } from "../types";
 
 interface ProductCardProps {
   product: Product;
@@ -79,13 +68,13 @@ export const ProductCard = ({
               <Star
                 key={i}
                 size={16}
-                fill={i < Math.floor(product.rating) ? 'currentColor' : 'none'}
+                fill={i < Math.floor(product.rating ?? 0) ? 'currentColor' : 'none'}
                 className="mr-0.5"
               />
             ))}
           </div>
           <span className="text-gray-400 text-sm ml-1">
-            ({product.reviews})
+            ({product.reviews ?? 0})
           </span>
         </div>
         <p className="text-gray-400 text-sm mb-4 line-clamp-2">

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
   updateFormField,
   submitContactForm,
-} from "../../store/slices/contactSlice";
+} from "../../../store/slices/contactSlice";
 
 const ContactPage = () => {
   const dispatch = useAppDispatch();

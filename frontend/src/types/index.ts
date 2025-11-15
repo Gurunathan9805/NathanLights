@@ -1,14 +1,16 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: number;
   image: string;
-  rating: number;
-  reviews: number;
+  rating?: number;
+  reviews?: number;
   description: string;
-  inStock: boolean;
+  inStock?: boolean;
+  stock?: number;
   createdAt?: string;
+  [key: string]: any; // For any additional properties that might come from the API
 }
 
 export interface CartItem extends Product {
