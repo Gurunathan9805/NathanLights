@@ -8,6 +8,7 @@ export interface Product {
   reviews: number;
   description: string;
   inStock: boolean;
+  createdAt?: string;
 }
 
 export interface CartItem extends Product {

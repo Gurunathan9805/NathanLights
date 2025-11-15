@@ -1,25 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { ProductCard } from '../components/ProductCard';
 import { ChevronDown, Filter } from 'lucide-react';
-import productsData from '../data/products';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { fetchProducts } from '../store/slices/productsSlice';
+import { addToCart as addToCartAction } from '../store/slices/cartSlice';
+import { addToWishlistThunk, removeFromWishlistThunk } from '../store/slices/wishlistSlice';
 import type { Product } from '../types';
 
-interface ShopProps {
-  wishlist: Product[];
-  addToCart: (product: Product) => void;
-  toggleWishlist: (product: Product) => void;
-}
-const Shop = ({
-  wishlist,
-  addToCart,
-  toggleWishlist,
-}: ShopProps) => {
+const Shop = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  
+  // Get products from Redux store with proper typing
+  const { items: products, status } = useAppSelector((state: any) => state.products);
+  const wishlist = useAppSelector((state: any) => state.wishlist.items);
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
-  const navigate = useNavigate();
+  
+  // Loading and error states
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-2xl">Loading products...</div>
+      </div>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-red-500">Error loading products</div>
+      </div>
+    );
+  }
+
+  // Fetch products on component mount
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [status, dispatch]);
 
   const categories = ['all', 'table', 'pendant', 'wall', 'led', 'outdoor'];
   const sortOptions = [
@@ -30,26 +54,52 @@ const Shop = ({
     { value: 'newest', label: 'Newest' },
   ];
 
-  const filteredProducts = productsData.filter((product) => {
+  const filteredProducts = products.filter((product: Product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
+  const sortedProducts = [...filteredProducts].sort((a: Product, b: Product) => {
     switch (sortBy) {
       case 'price-asc':
         return a.price - b.price;
       case 'price-desc':
         return b.price - a.price;
       case 'rating':
-        return b.rating - a.rating;
+        return (b.rating ?? 0) - (a.rating ?? 0);
       case 'newest':
-        return b.id - a.id; // Assuming higher IDs are newer products
+        // Handle cases where createdAt might be undefined
+        if (!a.createdAt && !b.createdAt) return 0;
+        if (!a.createdAt) return 1;  // Put items without createdAt at the end
+        if (!b.createdAt) return -1;  // Put items without createdAt at the end
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       default:
-        return 0; // Default sorting (featured)
+        return 0;
     }
   });
+  
+  const handleAddToCart = (product: Product) => {
+    dispatch(addToCartAction({ 
+      ...product, 
+      quantity: 1,
+      // Ensure all required CartItem properties are included
+      id: product.id.toString(), // Convert to string if needed
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      stock: product.inStock ? 10 : 0 // Default stock value
+    }));
+  };
+  
+  const handleToggleWishlist = (product: Product) => {
+    const isInWishlist = wishlist.some((item: Product) => item.id === product.id);
+    if (isInWishlist) {
+      dispatch(removeFromWishlistThunk(product.id.toString()));
+    } else {
+      dispatch(addToWishlistThunk(product.id.toString()));
+    }
+  };
 
   const handleViewDetails = (product: Product) => {
     navigate(`/product/${product.id}`);
@@ -125,14 +175,14 @@ const Shop = ({
       <div className="max-w-7xl mx-auto px-4 py-8">
         {sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedProducts.map((product) => (
+            {sortedProducts.map((product: Product) => (
               <ProductCard
                 key={product.id}
                 product={product}
                 onViewDetails={handleViewDetails}
-                onAddToCart={addToCart}
-                onToggleWishlist={toggleWishlist}
-                isInWishlist={wishlist.some((item) => item.id === product.id)}
+                onAddToCart={handleAddToCart}
+                onToggleWishlist={handleToggleWishlist}
+                isInWishlist={wishlist.some((item: Product) => item.id === product.id)}
               />
             ))}
           </div>

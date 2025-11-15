@@ -56,6 +56,9 @@ const Home = () => {
                 key={product.id}
                 product={product}
                 onViewDetails={handleViewDetails}
+                onAddToCart={() => {}}
+                onToggleWishlist={() => {}}
+                isInWishlist={false}
               />
             ))}
           </div>

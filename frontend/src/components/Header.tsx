@@ -1,11 +1,38 @@
-import { Heart, Search, ShoppingCart, User } from "lucide-react";
+import { Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useUser } from "../context/UserContext";
+import { useAppSelector } from "../store/store";
+import type { RootState } from "../store/store";
+import { useState } from "react";
+import { useAppDispatch } from "../store/store";
+import {
+  updateCartItemThunk,
+  removeFromCartThunk,
+} from "../store/slices/cartSlice";
 
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const { user } = useUser();
-  
+  const [showCart, setShowCart] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const wishlist = useAppSelector((state: RootState) => state.wishlist.items);
+  const cartItems = useAppSelector((state: RootState) => state.cart.items);
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartTotal = useAppSelector((state: RootState) => state.cart.totalPrice);
+  const handleUpdateQuantity = (productId: string, newQuantity: number) => {
+    if (newQuantity < 1) return; // Prevent quantities less than 1
+    dispatch(
+      updateCartItemThunk({
+        productId,
+        quantity: newQuantity,
+      })
+    );
+  };
+  const handleRemoveFromCart = (productId: string) => {
+    dispatch(removeFromCartThunk(productId));
+  };
   return (
     <header className="sticky top-0 z-50 bg-linear-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
       <div className="max-w-7xl mx-auto px-4 py-4">
@@ -90,7 +117,7 @@ const Header = () => {
               </button>
             )}
             <button
-              onClick={() => navigate("wishlist")}
+              onClick={() => navigate("/wishlist")}
               className="relative text-gray-300 hover:text-amber-400 transition"
             >
               <Heart size={20} />
@@ -184,11 +211,11 @@ const Header = () => {
                 <X size={24} />
               </button>
             </div>
-            {cart.length === 0 ? (
+            {cartItems.length === 0 ? (
               <p className="text-gray-400">Your cart is empty</p>
             ) : (
               <>
-                {cart.map((item: any) => (
+                {cartItems.map((item: any) => (
                   <div
                     key={item.id}
                     className="flex gap-4 mb-4 pb-4 border-b border-gray-700"
@@ -204,7 +231,7 @@ const Header = () => {
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            handleUpdateQuantity(item.id, item.quantity - 1)
                           }
                           className="px-2 py-1 bg-gray-700 text-white rounded"
                         >
@@ -213,14 +240,14 @@ const Header = () => {
                         <span className="text-white">{item.quantity}</span>
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            handleUpdateQuantity(item.id, item.quantity + 1)
                           }
                           className="px-2 py-1 bg-gray-700 text-white rounded"
                         >
                           +
                         </button>
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => handleRemoveFromCart(item.id)}
                           className="ml-auto text-red-500 text-sm"
                         >
                           Remove

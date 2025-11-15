@@ -1,15 +1,29 @@
 import { useState } from "react";
-const ContactPage = () => {
-  const [contactForm, setContactForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  updateFormField,
+  submitContactForm,
+} from "../../store/slices/contactSlice";
 
-  const handleContactSubmit = (e: any) => {
+const ContactPage = () => {
+  const dispatch = useAppDispatch();
+  const { formData, status, error } = useAppSelector((state) => state.contact);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleInputChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      dispatch(updateFormField({ field, value: e.target.value }));
+    };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Thank you! We will get back to you soon.");
-    setContactForm({ name: "", email: "", message: "" });
+    const resultAction = await dispatch(submitContactForm(formData));
+
+    if (submitContactForm.fulfilled.match(resultAction)) {
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    }
   };
 
   return (
@@ -19,48 +33,56 @@ const ContactPage = () => {
           Contact Us
         </h1>
 
+        {showSuccess && (
+          <div className="mb-6 p-4 bg-green-600 text-white rounded-lg">
+            Thank you! We will get back to you soon.
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-600 text-white rounded-lg">
+            {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
             <h2 className="text-2xl font-bold text-white mb-6">Get In Touch</h2>
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <input
-                key="contact-name"
                 type="text"
                 placeholder="Your Name *"
                 required
-                value={contactForm.name}
-                onChange={(e) =>
-                  setContactForm({ ...contactForm, name: e.target.value })
-                }
+                value={formData.name}
+                onChange={handleInputChange("name")}
                 className="w-full px-4 py-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-amber-500 focus:outline-none"
               />
               <input
-                key="contact-email"
                 type="email"
                 placeholder="Your Email *"
                 required
-                value={contactForm.email}
-                onChange={(e) =>
-                  setContactForm({ ...contactForm, email: e.target.value })
-                }
+                value={formData.email}
+                onChange={handleInputChange("email")}
                 className="w-full px-4 py-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-amber-500 focus:outline-none"
+                disabled={status === "loading"}
               />
               <textarea
-                key="contact-message"
                 placeholder="Your Message *"
                 required
-                value={contactForm.message}
-                onChange={(e) =>
-                  setContactForm({ ...contactForm, message: e.target.value })
-                }
-                rows={6}
+                rows={5}
+                value={formData.message}
+                onChange={handleInputChange("message")}
                 className="w-full px-4 py-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-amber-500 focus:outline-none"
+                disabled={status === "loading"}
               />
               <button
                 type="submit"
-                className="w-full bg-amber-500 text-white py-3 rounded-lg font-bold hover:bg-amber-600 transition"
+                disabled={status === "loading"}
+                className={`w-full bg-amber-500 text-white py-3 px-6 rounded-lg hover:bg-amber-600 transition ${
+                  status === "loading" ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                Send Message
+                {status === "loading" ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>

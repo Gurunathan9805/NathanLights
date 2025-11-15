@@ -1,104 +1,191 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { clearCart } from "../../store/slices/cartSlice";
+import { createOrder, resetOrderStatus } from "../../store/slices/orderSlice";
+import type { CheckoutData, CardDetails } from "../../types/checkout";
 
-interface CheckoutPageProps {
-  cart: any[];  // Replace 'any' with your actual cart item type
-  cartTotal: number;
-}
-
-const CheckoutPage = ({ cart, cartTotal }: CheckoutPageProps) => {
-  const [paymentMethod, setPaymentMethod] = useState("upi");
+const CheckoutPage = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { items: cart, totalPrice: cartTotal } = useAppSelector((state) => state.cart);
+  const { status: orderStatus, error: orderError } = useAppSelector((state) => state.orders);
+  
   const [showPaymentPage, setShowPaymentPage] = useState(false);
-  const [upiId, setUpiId] = useState("");
-  const [cardDetails, setCardDetails] = useState({
+  const [isLoading, setIsLoading] = useState(false);
+  type PaymentMethod = "upi" | "card";
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("upi");
+  
+  const [formData, setFormData] = useState<CheckoutData>({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    paymentMethod: 'upi',
+    upiId: "",
+  });
+  
+  const [cardDetails, setCardDetails] = useState<CardDetails>({
     number: "",
     name: "",
     expiry: "",
     cvv: "",
   });
-  const navigate = useNavigate();
-  const handleCheckout = (e: any) => {
+  
+  const [errors, setErrors] = useState<Partial<CheckoutData & CardDetails>>({});
+
+  // Reset order status when component mounts
+  useEffect(() => {
+    return () => {
+      dispatch(resetOrderStatus());
+    };
+  }, [dispatch]);
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<CheckoutData> = {};
+    
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      newErrors.email = "Please enter a valid email";
+    }
+    if (!formData.phone.match(/^\d{10}$/)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number";
+    }
+    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
+    if (!formData.pincode.match(/^\d{6}$/)) {
+      newErrors.pincode = "Please enter a valid 6-digit pincode";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCardDetails(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (cart.length === 0) {
       alert("Your cart is empty!");
       return;
     }
 
-    // Validate checkout data
-    // if (
-    //   !checkoutData.name ||
-    //   !checkoutData.email ||
-    //   !checkoutData.phone ||
-    //   !checkoutData.address ||
-    //   !checkoutData.city ||
-    //   !checkoutData.pincode
-    // ) {
-    //   alert("Please fill in all required fields!");
-    //   return;
-    // }
+    if (!validateForm()) {
+      return;
+    }
 
-    // Redirect to payment page
     setShowPaymentPage(true);
   };
 
-  const completeOrder = () => {
-    const order = {
-      id: Date.now(),
-      items: [...cart],
-      total: cartTotal + (cartTotal > 5000 ? 0 : 500),
-      //   customerData: { ...checkoutData },
-      paymentMethod,
-      status: "Processing",
-      date: new Date().toLocaleDateString(),
-    } as any;
-    // setOrders([...orders, order]);
-    // setCart([]);
-    setShowPaymentPage(false);
-    alert(
-      `Order placed successfully! Order ID: ${
-        order.id
-      }\n\nTotal: ₹${order.total.toLocaleString()}\nPayment Method: ${paymentMethod.toUpperCase()}\n\nYou will receive a confirmation email shortly.`
-    );
-    navigate("account");
+  const completeOrder = async () => {
+    setIsLoading(true);
+    try {
+      const orderData = {
+        items: cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image
+        })),
+        total: cartTotal + (cartTotal > 5000 ? 0 : 500),
+        customerData: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode
+        },
+        paymentMethod,
+        ...(paymentMethod === 'card' && { cardDetails })
+      };
+
+      const resultAction = await dispatch(createOrder(orderData));
+      
+      if (createOrder.fulfilled.match(resultAction)) {
+        dispatch(clearCart());
+        navigate("/order-confirmation", {
+          state: {
+            orderId: resultAction.payload.id,
+            total: resultAction.payload.total,
+            items: resultAction.payload.items
+          }
+        });
+      } else {
+        throw new Error(orderError || 'Failed to place order');
+      }
+    } catch (error) {
+      console.error('Order failed:', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handlePaymentSubmit = (e: any) => {
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (paymentMethod === "upi") {
-      if (!upiId) {
-        alert("Please enter your UPI ID");
-        return;
-      }
-      alert(`Processing UPI payment via ${upiId}...`);
-      setTimeout(() => {
-        alert("Payment successful!");
-        completeOrder();
-      }, 1000);
-    } else if (paymentMethod === "card") {
-      if (
-        !cardDetails.number ||
-        !cardDetails.name ||
-        !cardDetails.expiry ||
-        !cardDetails.cvv
-      ) {
-        alert("Please fill in all card details");
-        return;
-      }
-      if (cardDetails.number.length < 16) {
-        alert("Please enter a valid 16-digit card number");
-        return;
-      }
-      if (cardDetails.cvv.length < 3) {
-        alert("Please enter a valid CVV");
-        return;
-      }
-      alert("Processing card payment...");
-      setTimeout(() => {
-        alert("Payment successful!");
-        completeOrder();
-      }, 1000);
+    
+    if (paymentMethod === 'upi' && !formData.upiId) {
+      setErrors(prev => ({
+        ...prev,
+        upiId: 'UPI ID is required'
+      }));
+      return;
     }
+
+    if (paymentMethod === 'card') {
+      const cardErrors: Partial<CardDetails> = {};
+      if (!cardDetails.number.match(/^\d{16}$/)) {
+        cardErrors.number = 'Enter a valid 16-digit card number';
+      }
+      if (!cardDetails.name.trim()) {
+        cardErrors.name = 'Cardholder name is required';
+      }
+      if (!cardDetails.expiry.match(/^(0[1-9]|1[0-2])\/\d{2}$/)) {
+        cardErrors.expiry = 'Enter a valid expiry (MM/YY)';
+      }
+      if (!cardDetails.cvv.match(/^\d{3,4}$/)) {
+        cardErrors.cvv = 'Enter a valid CVV';
+      }
+      
+      if (Object.keys(cardErrors).length > 0) {
+        setErrors(prev => ({
+          ...prev,
+          ...cardErrors
+        }));
+        return;
+      }
+    }
+
+    await completeOrder();
   };
 
   // Payment Page View
@@ -170,7 +257,7 @@ const CheckoutPage = ({ cart, cartTotal }: CheckoutPageProps) => {
                     name="payment"
                     value="upi"
                     checked={paymentMethod === "upi"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                     className="mr-3 w-5 h-5"
                   />
                   <div className="flex-1">
@@ -188,7 +275,7 @@ const CheckoutPage = ({ cart, cartTotal }: CheckoutPageProps) => {
                     name="payment"
                     value="card"
                     checked={paymentMethod === "card"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                     className="mr-3 w-5 h-5"
                   />
                   <div className="flex-1">
@@ -204,22 +291,27 @@ const CheckoutPage = ({ cart, cartTotal }: CheckoutPageProps) => {
             </div>
 
             {/* Payment Form */}
-            <form onSubmit={handlePaymentSubmit} className="space-y-4">
+            <form onSubmit={handlePaymentSubmit} className="space-y-6">
               {paymentMethod === "upi" && (
                 <div>
                   <label className="block text-white font-semibold mb-2">
                     Enter UPI ID *
                   </label>
                   <input
-                    key="upi-input"
                     type="text"
+                    name="upiId"
                     placeholder="yourname@paytm / yourname@gpay"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 border-gray-600 focus:border-amber-500 focus:outline-none cursor-text"
+                    value={formData.upiId || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 ${
+                      errors.upiId ? 'border-red-500' : 'border-gray-600'
+                    } focus:border-amber-500 focus:outline-none`}
                     required
                     autoFocus
                   />
+                  {errors.upiId && (
+                    <p className="text-red-500 text-sm mt-1">{errors.upiId}</p>
+                  )}
                   <p className="text-gray-400 text-sm mt-2">
                     Enter your UPI ID to complete the payment
                   </p>
@@ -227,102 +319,105 @@ const CheckoutPage = ({ cart, cartTotal }: CheckoutPageProps) => {
               )}
 
               {paymentMethod === "card" && (
-                <>
+                <div className="space-y-4">
                   <div>
                     <label className="block text-white font-semibold mb-2">
                       Card Number *
                     </label>
                     <input
-                      key="card-number"
                       type="text"
+                      name="number"
                       placeholder="1234 5678 9012 3456"
                       value={cardDetails.number}
-                      onChange={(e) =>
-                        setCardDetails({
-                          ...cardDetails,
-                          number: e.target.value
-                            .replace(/\D/g, "")
-                            .slice(0, 16),
-                        })
-                      }
-                      className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 border-gray-600 focus:border-amber-500 focus:outline-none cursor-text"
+                      onChange={handleCardChange}
+                      className={`w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 ${
+                        errors.number ? 'border-red-500' : 'border-gray-600'
+                      } focus:border-amber-500 focus:outline-none`}
                       required
-                      autoFocus
                     />
+                    {errors.number && (
+                      <p className="text-red-500 text-sm mt-1">{errors.number}</p>
+                    )}
                   </div>
+                  
                   <div>
                     <label className="block text-white font-semibold mb-2">
                       Cardholder Name *
                     </label>
                     <input
-                      key="card-name"
                       type="text"
+                      name="name"
                       placeholder="JOHN DOE"
                       value={cardDetails.name}
-                      onChange={(e) =>
-                        setCardDetails({
-                          ...cardDetails,
-                          name: e.target.value.toUpperCase(),
-                        })
-                      }
-                      className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 border-gray-600 focus:border-amber-500 focus:outline-none cursor-text"
+                      onChange={handleCardChange}
+                      className={`w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 ${
+                        errors.name ? 'border-red-500' : 'border-gray-600'
+                      } focus:border-amber-500 focus:outline-none`}
                       required
                     />
+                    {errors.name && (
+                      <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                    )}
                   </div>
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-white font-semibold mb-2">
                         Expiry Date *
                       </label>
                       <input
-                        key="card-expiry"
                         type="text"
+                        name="expiry"
                         placeholder="MM/YY"
                         value={cardDetails.expiry}
-                        onChange={(e) => {
-                          let val = e.target.value.replace(/\D/g, "");
-                          if (val.length >= 2)
-                            val = val.slice(0, 2) + "/" + val.slice(2, 4);
-                          setCardDetails({ ...cardDetails, expiry: val });
-                        }}
-                        className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 border-gray-600 focus:border-amber-500 focus:outline-none cursor-text"
+                        onChange={handleCardChange}
+                        className={`w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 ${
+                          errors.expiry ? 'border-red-500' : 'border-gray-600'
+                        } focus:border-amber-500 focus:outline-none`}
                         maxLength={5}
                         required
                       />
+                      {errors.expiry && (
+                        <p className="text-red-500 text-sm mt-1">{errors.expiry}</p>
+                      )}
                     </div>
+                    
                     <div>
                       <label className="block text-white font-semibold mb-2">
                         CVV *
                       </label>
                       <input
-                        key="card-cvv"
-                        type="password"
+                        type="text"
+                        name="cvv"
                         placeholder="123"
                         value={cardDetails.cvv}
-                        onChange={(e) =>
-                          setCardDetails({
-                            ...cardDetails,
-                            cvv: e.target.value.replace(/\D/g, "").slice(0, 3),
-                          })
-                        }
-                        className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 border-gray-600 focus:border-amber-500 focus:outline-none cursor-text"
-                        maxLength={3}
+                        onChange={handleCardChange}
+                        className={`w-full px-4 py-3 bg-gray-700 text-white rounded-lg border-2 ${
+                          errors.cvv ? 'border-red-500' : 'border-gray-600'
+                        } focus:border-amber-500 focus:outline-none`}
+                        maxLength={4}
                         required
                       />
+                      {errors.cvv && (
+                        <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>
+                      )}
                     </div>
                   </div>
-                </>
+                </div>
               )}
-
+              
               <button
                 type="submit"
                 className="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-green-700 transition mt-6"
+                disabled={isLoading}
               >
-                {paymentMethod === "upi"
-                  ? "Pay with UPI"
-                  : `Pay ₹${(
-                      cartTotal + (cartTotal > 5000 ? 0 : 500)
-                    ).toLocaleString()}`}
+                {isLoading ? (
+                  'Processing...'
+                ) : paymentMethod === "upi" ? (
+                  "Pay with UPI"
+                ) : (
+                  `Pay ₹${(cartTotal + (cartTotal > 5000 ? 0 : 500)).toLocaleString()}`
+                )}
               </button>
 
               <p className="text-gray-400 text-sm text-center mt-4">
