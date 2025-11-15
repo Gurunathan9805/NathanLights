@@ -36,7 +36,8 @@ const Header = () => {
     dispatch(removeFromCartThunk(productId));
   };
   return (
-    <header className="top-0 z-50 bg-linear-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
+    <header className="top-0 z-50 bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
+      {" "}
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -191,7 +192,6 @@ const Header = () => {
           </nav>
         )}
       </div>
-
       {/* Cart Sidebar */}
       {showCart && (
         <div

@@ -1,6 +1,6 @@
 const PortfolioPage = () => {
   return (
-    <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+    <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-4xl font-bold text-amber-400 mb-4 text-center">
           Our Portfolio
@@ -52,7 +52,7 @@ const PortfolioPage = () => {
                   alt={project.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-linear-gradient-to-t from-black via-transparent to-transparent opacity-0 hover:opacity-100 transition">
+                <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-0 hover:opacity-100 transition">
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3 className="text-white font-bold text-xl mb-2">
                       {project.title}

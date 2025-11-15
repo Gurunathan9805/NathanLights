@@ -217,7 +217,7 @@ const UserPanel = () => {
 
   // Header Component
   // const Header = () => (
-  //   <header className="sticky top-0 z-50 bg-linear-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
+  //   <header className="sticky top-0 z-50 bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 shadow-lg border-b border-gray-700">
   //     <div className="max-w-7xl mx-auto px-4 py-4">
   //       <div className="flex items-center justify-between">
   //         {/* Logo */}
@@ -466,7 +466,7 @@ const UserPanel = () => {
 
   // Home Page
   // const HomePage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900">
   //     {/* Hero Banner */}
   //     <div
   //       className="relative h-screen bg-cover bg-center"
@@ -554,7 +554,7 @@ const UserPanel = () => {
   //     </div>
 
   //     {/* Why Nathan Lights */}
-  //     <div className="bg-linear-gradient-to-r from-gray-800 to-gray-900 py-16">
+  //     <div className="bg-linear-to-r from-gray-800 to-gray-900 py-16">
   //       <div className="max-w-7xl mx-auto px-4">
   //         <h2 className="text-4xl font-bold text-center text-amber-400 mb-12">
   //           Why Choose Nathan Lights
@@ -642,7 +642,7 @@ const UserPanel = () => {
 
   // Shop Page
   // const ShopPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-7xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-8">
   //         Shop All Products
@@ -795,7 +795,7 @@ const UserPanel = () => {
 
   // Product Detail Page
   // const ProductDetailPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-7xl mx-auto px-4">
   //       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
   //         <div>
@@ -1034,7 +1034,7 @@ const UserPanel = () => {
   //   // Payment Page View
   //   if (showPaymentPage) {
   //     return (
-  //       <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //       <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //         <div className="max-w-2xl mx-auto px-4">
   //           <button
   //             onClick={() => setShowPaymentPage(false)}
@@ -1268,7 +1268,7 @@ const UserPanel = () => {
   //   }
 
   //   return (
-  //     <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //     <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //       <div className="max-w-5xl mx-auto px-4">
   //         <h1 className="text-4xl font-bold text-amber-400 mb-8">Checkout</h1>
   //         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1403,7 +1403,7 @@ const UserPanel = () => {
 
   // Account Page
   // const AccountPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-6xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-8">My Account</h1>
 
@@ -1512,7 +1512,7 @@ const UserPanel = () => {
 
   // Wishlist Page
   // const WishlistPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-7xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-8">
   //         My Wishlist ({wishlist.length})
@@ -1582,7 +1582,7 @@ const UserPanel = () => {
 
   // About Page
   // const AboutPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900">
   //     <div
   //       className="relative h-96 bg-cover bg-center"
   //       style={{
@@ -1700,7 +1700,7 @@ const UserPanel = () => {
 
   // Portfolio Page
   // const PortfolioPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-7xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-4 text-center">
   //         Our Portfolio
@@ -1776,7 +1776,7 @@ const UserPanel = () => {
 
   // Blog Page
   // const BlogPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-7xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-12 text-center">
   //         Lighting Ideas & Tips
@@ -1825,7 +1825,7 @@ const UserPanel = () => {
   //             key={idx}
   //             className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition"
   //           >
-  //             <div className="h-48 bg-linear-gradient-to-r from-amber-500 to-amber-700"></div>
+  //             <div className="h-48 bg-linear-to-r from-amber-500 to-amber-700"></div>
   //             <div className="p-6">
   //               <p className="text-amber-400 text-sm mb-2">{post.date}</p>
   //               <h3 className="text-white font-bold text-xl mb-3">
@@ -1858,7 +1858,7 @@ const UserPanel = () => {
   //   };
 
   //   return (
-  //     <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //     <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //       <div className="max-w-6xl mx-auto px-4">
   //         <h1 className="text-4xl font-bold text-amber-400 mb-12 text-center">
   //           Contact Us
@@ -1969,7 +1969,7 @@ const UserPanel = () => {
 
   // FAQ Page
   // const FAQPage = () => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-4xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-12 text-center">
   //         Frequently Asked Questions
@@ -2033,7 +2033,7 @@ const UserPanel = () => {
   //   };
 
   //   return (
-  //     <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16 flex items-center">
+  //     <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16 flex items-center">
   //       <div className="max-w-md mx-auto px-4 w-full">
   //         <div className="bg-gray-800 p-8 rounded-lg shadow-2xl">
   //           <h1 className="text-3xl font-bold text-amber-400 mb-6 text-center">
@@ -2145,7 +2145,7 @@ const UserPanel = () => {
   //   );
 
   //   return (
-  //     <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //     <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //       <div className="max-w-7xl mx-auto px-4">
   //         <h1 className="text-4xl font-bold text-amber-400 mb-8">
   //           Search Products
@@ -2229,7 +2229,7 @@ const UserPanel = () => {
 
   // Legal Pages
   // const LegalPage = ({ title, content }: any) => (
-  //   <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+  //   <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
   //     <div className="max-w-4xl mx-auto px-4">
   //       <h1 className="text-4xl font-bold text-amber-400 mb-8">{title}</h1>
   //       <div className="bg-gray-800 p-8 rounded-lg">

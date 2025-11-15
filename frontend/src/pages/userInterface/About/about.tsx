@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900">
       <div
         className="relative h-96 bg-cover bg-center"
         style={{

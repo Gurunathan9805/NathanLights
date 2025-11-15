@@ -16,7 +16,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16 flex items-center">
+    <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16 flex items-center">
       <div className="max-w-md mx-auto px-4 w-full">
         <div className="bg-gray-800 p-8 rounded-lg shadow-2xl">
           <h1 className="text-3xl font-bold text-amber-400 mb-6 text-center">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Home,
   Package,
@@ -7,8 +7,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Bell,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -26,18 +25,23 @@ const Sidebar: React.FC<SidebarProps> = ({
   pendingOrders,
 }) => {
   const menuItems = [
-    { icon: Home, label: 'Dashboard', page: 'dashboard' },
-    { icon: Package, label: 'Products', page: 'products' },
-    { icon: ShoppingCart, label: 'Orders', page: 'orders', badge: pendingOrders },
-    { icon: Users, label: 'Customers', page: 'customers' },
-    { icon: BarChart3, label: 'Analytics', page: 'analytics' },
-    { icon: Settings, label: 'Settings', page: 'settings' },
+    { icon: Home, label: "Dashboard", page: "dashboard" },
+    { icon: Package, label: "Products", page: "products" },
+    {
+      icon: ShoppingCart,
+      label: "Orders",
+      page: "orders",
+      badge: pendingOrders,
+    },
+    { icon: Users, label: "Customers", page: "customers" },
+    { icon: BarChart3, label: "Analytics", page: "analytics" },
+    { icon: Settings, label: "Settings", page: "settings" },
   ];
 
   return (
     <div
       className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white transition-all duration-300 ease-in-out ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
       <div className="flex h-full flex-col">
@@ -72,8 +76,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => navigate(item.page)}
               className={`flex w-full items-center rounded-md px-4 py-3 text-sm font-medium transition-colors ${
                 currentPage === item.page
-                  ? 'bg-gray-800 text-white'
-                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  ? "bg-gray-800 text-white"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
             >
               <item.icon className="mr-3 h-5 w-5" />

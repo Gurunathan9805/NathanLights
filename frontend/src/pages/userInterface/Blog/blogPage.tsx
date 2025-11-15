@@ -1,6 +1,6 @@
 const BlogPage = () => {
   return (
-    <div className="min-h-screen bg-linear-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+    <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-4xl font-bold text-amber-400 mb-12 text-center">
           Lighting Ideas & Tips
@@ -49,7 +49,7 @@ const BlogPage = () => {
               key={idx}
               className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition"
             >
-              <div className="h-48 bg-linear-gradient-to-r from-amber-500 to-amber-700"></div>
+              <div className="h-48 bg-linear-to-r from-amber-500 to-amber-700"></div>
               <div className="p-6">
                 <p className="text-amber-400 text-sm mb-2">{post.date}</p>
                 <h3 className="text-white font-bold text-xl mb-3">

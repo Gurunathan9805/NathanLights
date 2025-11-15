@@ -4,11 +4,10 @@ import {
   Users,
   Package,
   DollarSign,
-  TrendingUp,
   AlertCircle,
   Clock,
 } from "lucide-react";
-import products from "../../../data/products";
+// import products from "../../../data/products";
 
 interface StatCardProps {
   title: string;
@@ -20,7 +19,7 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => (
   <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
     <div className="flex items-center">
-      <div className="flex-shrink-0 rounded-md bg-indigo-500 p-3">{icon}</div>
+      <div className="shrink-0 rounded-md bg-indigo-500 p-3">{icon}</div>
       <div className="ml-5 w-0 flex-1">
         <dt className="truncate text-sm font-medium text-gray-500">{title}</dt>
         <dd className="flex items-baseline">
@@ -32,7 +31,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => (
           >
             {change >= 0 ? (
               <svg
-                className="h-5 w-5 flex-shrink-0 self-center text-green-500"
+                className="h-5 w-5 shrink-0 self-center text-green-500"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
@@ -45,7 +44,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => (
               </svg>
             ) : (
               <svg
-                className="h-5 w-5 flex-shrink-0 self-center text-red-500"
+                className="h-5 w-5 shrink-0 self-center text-red-500"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
@@ -68,292 +67,398 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => (
   </div>
 );
 
-interface DashboardPageProps {
-  totalSales: number;
-  totalOrders: number;
-  totalProducts: number;
-  totalCustomers: number;
-  recentOrders: any[];
-  topProducts: any[];
-  salesData: any[];
-  onViewOrder: (order: any) => void;
-  onViewProduct: (product: any) => void;
-}
+import { useNavigate } from "react-router-dom";
 
-const DashboardPage = ({
-  totalSales,
-  totalOrders,
-  totalProducts,
-  totalCustomers,
-  recentOrders,
-  topProducts,
-  salesData,
-  onViewOrder,
-  onViewProduct,
-}: DashboardPageProps) => (
-  <div>
-    {/* Stats Grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-green-500 bg-opacity-20 rounded-lg">
-            <DollarSign
-              className="text-green-500"
-              size={24}
-              aria-hidden="true"
-            />
-          </div>
-          <span className="text-green-500 text-sm font-semibold">+12.5%</span>
-        </div>
-        <p className="text-gray-400 text-sm mb-1">Total Revenue</p>
-        <p className="text-white text-3xl font-bold">
-          ₹{totalSales.toLocaleString()}
-        </p>
-      </div>
+// Dummy data for the dashboard
 
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
-            <ShoppingCart
-              className="text-blue-500"
-              size={24}
-              aria-hidden="true"
-            />
-          </div>
-          <span className="text-blue-500 text-sm font-semibold">+8.2%</span>
-        </div>
-        <p className="text-gray-400 text-sm mb-1">Total Orders</p>
-        <p className="text-white text-3xl font-bold">{totalOrders}</p>
-      </div>
+const dummyData = {
+  totalSales: 125000,
+  totalOrders: 342,
+  totalProducts: 85,
+  totalCustomers: 124,
+  lowStockProducts: 7,
+  outOfStockProducts: 3,
+  pendingOrders: 12,
+  recentOrders: [
+    { id: "ORD-001", customer: "John Doe", total: 1250, status: "Completed" },
+    { id: "ORD-002", customer: "Jane Smith", total: 850, status: "Processing" },
+    {
+      id: "ORD-003",
+      customer: "Robert Johnson",
+      total: 2100,
+      status: "Shipped",
+    },
+    { id: "ORD-004", customer: "Emily Davis", total: 450, status: "Pending" },
+    {
+      id: "ORD-005",
+      customer: "Michael Brown",
+      total: 3200,
+      status: "Completed",
+    },
+  ],
+  topProducts: [
+    {
+      id: 1,
+      name: "Premium Headphones",
+      price: 199,
+      sold: 45,
+      stock: 15,
+      inStock: true,
+      image: "/headphones.jpg",
+    },
+    {
+      id: 2,
+      name: "Wireless Earbuds",
+      price: 129,
+      sold: 38,
+      stock: 22,
+      inStock: true,
+      image: "/earbuds.jpg",
+    },
+    {
+      id: 3,
+      name: "Smart Watch",
+      price: 249,
+      sold: 32,
+      stock: 8,
+      inStock: true,
+      image: "/smartwatch.jpg",
+    },
+    {
+      id: 4,
+      name: "Bluetooth Speaker",
+      price: 89,
+      sold: 28,
+      stock: 0,
+      inStock: false,
+      image: "/speaker.jpg",
+    },
+  ],
+  salesData: [
+    { month: "Jan", sales: 4000 },
+    { month: "Feb", sales: 3000 },
+    { month: "Mar", sales: 5000 },
+    { month: "Apr", sales: 2780 },
+    { month: "May", sales: 1890 },
+    { month: "Jun", sales: 2390 },
+  ],
+};
 
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
-            <Package className="text-purple-500" size={24} aria-hidden="true" />
-          </div>
-          <span className="text-purple-500 text-sm font-semibold">
-            {lowStockProducts} low
-          </span>
-        </div>
-        <p className="text-gray-400 text-sm mb-1">Total Products</p>
-        <p className="text-white text-3xl font-bold">{totalProducts}</p>
-      </div>
+const DashboardPage = () => {
+  // Dummy functions
+  const onViewOrder = (order: any) => {
+    console.log("View order:", order);
+    // Navigate to order details
+  };
 
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-amber-500 bg-opacity-20 rounded-lg">
-            <Users className="text-amber-500" size={24} aria-hidden="true" />
-          </div>
-          <span className="text-amber-500 text-sm font-semibold">+5.1%</span>
-        </div>
-        <p className="text-gray-400 text-sm mb-1">Total Customers</p>
-        <p className="text-white text-3xl font-bold">{totalCustomers}</p>
-      </div>
-    </div>
+  const onViewProduct = (product: any) => {
+    console.log("View product:", product);
+    // Navigate to product details
+  };
 
-    {/* Stock Alerts */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-gray-400 text-sm mb-1">Low Stock Products</p>
-            <p className="text-white text-2xl font-bold">{lowStockProducts}</p>
-          </div>
-          <AlertCircle className="text-amber-500" size={32} />
-        </div>
-      </div>
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-gray-400 text-sm mb-1">Out of Stock</p>
-            <p className="text-white text-2xl font-bold">
-              {outOfStockProducts}
-            </p>
-          </div>
-          <AlertCircle className="text-red-500" size={32} />
-        </div>
-      </div>
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-gray-400 text-sm mb-1">Pending Orders</p>
-            <p className="text-white text-2xl font-bold">{pendingOrders}</p>
-          </div>
-          <Clock className="text-blue-500" size={32} />
-        </div>
-      </div>
-    </div>
+  // Get products from dummy data
+  const products = [...dummyData.topProducts];
+  // Use dummy data
+  const {
+    totalSales,
+    totalOrders,
+    totalProducts,
+    totalCustomers,
+    lowStockProducts,
+    outOfStockProducts,
+    pendingOrders,
+    recentOrders,
+    topProducts,
+    salesData,
+  } = dummyData;
+  const navigate = useNavigate();
 
-    {/* Recent Activity */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Recent Orders */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white">Recent Orders</h2>
-          <button
-            onClick={() => navigate("orders")}
-            className="text-amber-400 hover:underline text-sm"
-          >
-            View All
-          </button>
-        </div>
-        <div className="space-y-4">
-          {orders.slice(0, 5).map((order: any) => (
-            <div
-              key={order.id}
-              className="flex items-center justify-between p-4 bg-gray-900 rounded-lg"
-            >
-              <div>
-                <p className="text-white font-semibold">#{order.id}</p>
-                <p className="text-gray-400 text-sm">{order.customer}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-white font-bold">
-                  ₹{order.total.toLocaleString()}
-                </p>
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
-                    order.status
-                  )}`}
-                >
-                  {order.status}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = "/placeholder-product.png"; // Fallback image path
+  };
 
-      {/* Low Stock Alerts */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white">Low Stock Alerts</h2>
-          <button
-            onClick={() => navigate("products")}
-            className="text-amber-400 hover:underline text-sm"
-          >
-            Manage
-          </button>
-        </div>
-        <div className="space-y-4">
-          {products
-            .filter((p: any) => p.stock < 10 && p.stock > 0)
-            .map((product: any) => (
-              <div
-                key={product.id}
-                className="flex items-center gap-4 p-4 bg-gray-900 rounded-lg"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-16 h-16 object-cover rounded"
-                  onError={handleImageError}
-                />
-                <div className="flex-1">
-                  <p className="text-white font-semibold">{product.name}</p>
-                  <p className="text-gray-400 text-sm">
-                    Stock: {product.stock} units
-                  </p>
-                </div>
-                <AlertCircle
-                  className="text-amber-500"
-                  size={20}
-                  aria-hidden="true"
-                />
-              </div>
-            ))}
-          {products
-            .filter((p: any) => p.stock === 0)
-            .map((product: any) => (
-              <div
-                key={product.id}
-                className="flex items-center gap-4 p-4 bg-gray-900 rounded-lg"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-16 h-16 object-cover rounded"
-                  onError={handleImageError}
-                />
-                <div className="flex-1">
-                  <p className="text-white font-semibold">{product.name}</p>
-                  <p className="text-gray-400 text-sm">Out of Stock</p>
-                </div>
-                <AlertCircle
-                  className="text-red-500"
-                  size={20}
-                  aria-hidden="true"
-                />
-              </div>
-            ))}
-          {lowStockProducts === 0 && outOfStockProducts === 0 && (
-            <p className="text-gray-400 text-center py-8">
-              All products are well stocked!
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-
-    {/* Top Products */}
-    <div className="bg-gray-800 rounded-lg border border-gray-700 p-6 mt-6">
-      <h2 className="text-xl font-bold text-white mb-6">
-        Top Selling Products
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products
-          .sort((a: any, b: any) => b.sold - a.sold)
-          .slice(0, 4)
-          .map((product: any) => (
-            <div
-              key={product.id}
-              className="bg-gray-900 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-40 object-cover"
-                onError={handleImageError}
+  return (
+    <div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-green-500 bg-opacity-20 rounded-lg">
+              <DollarSign
+                className="text-green-500"
+                size={24}
+                aria-hidden="true"
               />
-              <div className="p-4">
-                <p className="text-white font-semibold mb-2 line-clamp-2">
-                  {product.name}
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-amber-400 font-bold">
-                    ₹{product.price.toLocaleString()}
-                  </span>
-                  <span className="text-gray-400 text-sm">
-                    {product.sold} sold
-                  </span>
+            </div>
+            <span className="text-green-500 text-sm font-semibold">+12.5%</span>
+          </div>
+          <p className="text-gray-400 text-sm mb-1">Total Revenue</p>
+          <p className="text-white text-3xl font-bold">
+            ₹{totalSales.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
+              <ShoppingCart
+                className="text-blue-500"
+                size={24}
+                aria-hidden="true"
+              />
+            </div>
+            <span className="text-blue-500 text-sm font-semibold">+8.2%</span>
+          </div>
+          <p className="text-gray-400 text-sm mb-1">Total Orders</p>
+          <p className="text-white text-3xl font-bold">{totalOrders}</p>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
+              <Package
+                className="text-purple-500"
+                size={24}
+                aria-hidden="true"
+              />
+            </div>
+            <span className="text-purple-500 text-sm font-semibold">
+              {lowStockProducts} low
+            </span>
+          </div>
+          <p className="text-gray-400 text-sm mb-1">Total Products</p>
+          <p className="text-white text-3xl font-bold">{totalProducts}</p>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-amber-500 bg-opacity-20 rounded-lg">
+              <Users className="text-amber-500" size={24} aria-hidden="true" />
+            </div>
+            <span className="text-amber-500 text-sm font-semibold">+5.1%</span>
+          </div>
+          <p className="text-gray-400 text-sm mb-1">Total Customers</p>
+          <p className="text-white text-3xl font-bold">{totalCustomers}</p>
+        </div>
+      </div>
+
+      {/* Stock Alerts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm mb-1">Low Stock Products</p>
+              <p className="text-white text-2xl font-bold">
+                {lowStockProducts}
+              </p>
+            </div>
+            <AlertCircle className="text-amber-500" size={32} />
+          </div>
+        </div>
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm mb-1">Out of Stock</p>
+              <p className="text-white text-2xl font-bold">
+                {outOfStockProducts}
+              </p>
+            </div>
+            <AlertCircle className="text-red-500" size={32} />
+          </div>
+        </div>
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm mb-1">Pending Orders</p>
+              <p className="text-white text-2xl font-bold">{pendingOrders}</p>
+            </div>
+            <Clock className="text-blue-500" size={32} />
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Orders */}
+        <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">Recent Orders</h2>
+            <button
+              onClick={() => navigate("orders")}
+              className="text-amber-400 hover:underline text-sm"
+            >
+              View All
+            </button>
+          </div>
+          <div className="space-y-4">
+            {recentOrders.slice(0, 5).map((order: any) => (
+              <div
+                key={order.id}
+                className="flex items-center justify-between p-4 bg-gray-900 rounded-lg"
+              >
+                <div>
+                  <p className="text-white font-semibold">#{order.id}</p>
+                  <p className="text-gray-400 text-sm">{order.customer}</p>
                 </div>
-                <div className="mt-2">
+                <div className="text-right">
+                  <p className="text-white font-bold">
+                    ₹{order.total.toLocaleString()}
+                  </p>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      product.inStock
-                        ? product.stock < 10
-                          ? "bg-amber-500 bg-opacity-20 text-amber-500"
-                          : "bg-green-500 bg-opacity-20 text-green-500"
-                        : "bg-red-500 bg-opacity-20 text-red-500"
-                    }`}
+                    className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
+                      order.status
+                    )}`}
                   >
-                    {product.inStock
-                      ? product.stock < 10
-                        ? "Low Stock"
-                        : "In Stock"
-                      : "Out of Stock"}
+                    {order.status}
                   </span>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+
+        {/* Low Stock Alerts */}
+        <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">Low Stock Alerts</h2>
+            <button
+              onClick={() => navigate("products")}
+              className="text-amber-400 hover:underline text-sm"
+            >
+              Manage
+            </button>
+          </div>
+          <div className="space-y-4">
+            {products
+              .filter((p: any) => p.stock < 10 && p.stock > 0)
+              .map((product: any) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-4 p-4 bg-gray-900 rounded-lg"
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded"
+                    onError={handleImageError}
+                  />
+                  <div className="flex-1">
+                    <p className="text-white font-semibold">{product.name}</p>
+                    <p className="text-gray-400 text-sm">
+                      Stock: {product.stock} units
+                    </p>
+                  </div>
+                  <AlertCircle
+                    className="text-amber-500"
+                    size={20}
+                    aria-hidden="true"
+                  />
+                </div>
+              ))}
+            {products
+              .filter((p: any) => p.stock === 0)
+              .map((product: any) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-4 p-4 bg-gray-900 rounded-lg"
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded"
+                    onError={handleImageError}
+                  />
+                  <div className="flex-1">
+                    <p className="text-white font-semibold">{product.name}</p>
+                    <p className="text-gray-400 text-sm">Out of Stock</p>
+                  </div>
+                  <AlertCircle
+                    className="text-red-500"
+                    size={20}
+                    aria-hidden="true"
+                  />
+                </div>
+              ))}
+            {lowStockProducts === 0 && outOfStockProducts === 0 && (
+              <p className="text-gray-400 text-center py-8">
+                All products are well stocked!
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Top Products */}
+      <div className="bg-gray-800 rounded-lg border border-gray-700 p-6 mt-6">
+        <h2 className="text-xl font-bold text-white mb-6">
+          Top Selling Products
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products
+            .sort((a: any, b: any) => b.sold - a.sold)
+            .slice(0, 4)
+            .map((product: any) => (
+              <div
+                key={product.id}
+                className="bg-gray-900 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300"
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-40 object-cover"
+                  onError={handleImageError}
+                />
+                <div className="p-4">
+                  <p className="text-white font-semibold mb-2 line-clamp-2">
+                    {product.name}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-amber-400 font-bold">
+                      ₹{product.price.toLocaleString()}
+                    </span>
+                    <span className="text-gray-400 text-sm">
+                      {product.sold} sold
+                    </span>
+                  </div>
+                  <div className="mt-2">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        product.inStock
+                          ? product.stock < 10
+                            ? "bg-amber-500 bg-opacity-20 text-amber-500"
+                            : "bg-green-500 bg-opacity-20 text-green-500"
+                          : "bg-red-500 bg-opacity-20 text-red-500"
+                      }`}
+                    >
+                      {product.inStock
+                        ? product.stock < 10
+                          ? "Low Stock"
+                          : "In Stock"
+                        : "Out of Stock"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 export default DashboardPage;
-function getStatusColor(status: any) {
-    throw new Error("Function not implemented.");
-}
 
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "completed":
+      return "bg-green-500 bg-opacity-20 text-green-500";
+    case "processing":
+      return "bg-blue-500 bg-opacity-20 text-blue-500";
+    case "shipped":
+      return "bg-purple-500 bg-opacity-20 text-purple-500";
+    case "pending":
+      return "bg-amber-500 bg-opacity-20 text-amber-500";
+    default:
+      return "bg-gray-500 bg-opacity-20 text-gray-500";
+  }
+};
